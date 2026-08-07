@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,6 +12,23 @@ import '../widgets/confetti_overlay.dart';
 import '../services/sound_service.dart';
 
 enum RaffleStage { countdown, spinning, revealed }
+
+class SpinWheelCurve extends Curve {
+  const SpinWheelCurve();
+
+  @override
+  double transformInternal(double t) {
+    if (t < 0.60) {
+      // Giro constante em ALTA VELOCIDADE nos primeiros 6.0 segundos (80% do percurso)
+      return (t / 0.60) * 0.80;
+    } else {
+      // Desaceleração física suave (freio) nos últimos 4.0 segundos (20% do percurso)
+      final double p = (t - 0.60) / 0.40;
+      final double easeOut = 1.0 - pow(1.0 - p, 3);
+      return 0.80 + (easeOut * 0.20);
+    }
+  }
+}
 
 class RaffleDramaticScreen extends StatefulWidget {
   const RaffleDramaticScreen({super.key});
@@ -27,7 +45,6 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
   
   late ConfettiController _confettiController;
   RaffleItem? _winner;
-  int _spinIndex = 0;
 
   final List<String> _suspenseMessages = [
     "🍿 Preparando a pipoca e o suspense...",
@@ -48,10 +65,14 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
     });
   }
 
+  FixedExtentScrollController? _wheelController;
+  List<RaffleItem> _wheelItems = [];
+
   @override
   void dispose() {
     _countdownTimer?.cancel();
     _spinTimer?.cancel();
+    _wheelController?.dispose();
     _confettiController.dispose();
     SoundService.stopPeao();
     super.dispose();
@@ -80,7 +101,6 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
         setState(() {
           _countdown--;
         });
-        // Aumenta o tom (pitch) a cada segundo para criar suspense!
         final double pitchStep = 1.6 - (_countdown * 0.14);
         SoundService.playTick(pitch: pitchStep);
       } else {
@@ -91,69 +111,72 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
   }
 
   void _startSpinningAnimation(AppState appState) {
-    setState(() {
-      _stage = RaffleStage.spinning;
-    });
-
     final candidates = appState.undrawnCurrentItems;
     if (candidates.isEmpty) {
       _revealWinner();
       return;
     }
 
-    // Iniciar áudio peao.mp3
+    final random = Random();
+
+    // 1. Embaralhar completamente a ordem das opções na fita a cada sorteio
+    final List<RaffleItem> shuffledCandidates = List.from(candidates)..shuffle(random);
+
+    // 2. Definir um ponto inicial aleatório na fita
+    final int initialItemIndex = random.nextInt(shuffledCandidates.length);
+
+    // 3. Gerar a fita de 300 itens com a ordem embaralhada
+    _wheelItems = List.generate(300, (index) => shuffledCandidates[index % shuffledCandidates.length]);
+
+    // 4. Encontrar o índice de destino (distância de ~220 itens) que corresponde exatamente ao vencedor
+    int baseTarget = 200 + random.nextInt(30);
+    int targetIndex = baseTarget;
+    while (_wheelItems[targetIndex].id != _winner?.id && targetIndex < _wheelItems.length - 1) {
+      targetIndex++;
+    }
+
+    // 5. Inicializar o controller no ponto de partida aleatório
+    _wheelController = FixedExtentScrollController(initialItem: initialItemIndex);
+
+    setState(() {
+      _stage = RaffleStage.spinning;
+    });
+
+    // Tocar áudio peao.mp3
     SoundService.playPeao();
 
-    int tickCount = 0;
-    const int totalDurationMs = 10000; // 10 segundos
+    // Disparar o giro 3D rápido com desaceleração nos últimos 4s
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _wheelController?.animateToItem(
+        targetIndex,
+        duration: const Duration(milliseconds: 10000),
+        curve: const SpinWheelCurve(),
+      );
+    });
+
     final DateTime startTime = DateTime.now();
+    const int totalDurationMs = 10000;
 
-    void runSpinStep() async {
+    // Timer para controlar o FadeOut do áudio e transição final
+    _spinTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) async {
       if (!mounted) return;
-
       final int elapsedMs = DateTime.now().difference(startTime).inMilliseconds;
       final double progress = (elapsedMs / totalDurationMs).clamp(0.0, 1.0);
 
-      // FadeOut suave do áudio nos últimos 3.5 segundos
+      // FadeOut do peao.mp3 nos últimos 3.5 segundos
       if (progress > 0.65) {
         final double volume = (1.0 - progress) / 0.35;
         SoundService.setPeaoVolume(volume);
       }
 
-      // Quando atingir os 10 segundos, travar no vencedor
       if (elapsedMs >= totalDurationMs) {
-        final int winnerIndex = candidates.indexWhere((item) => item.id == _winner?.id);
-        setState(() {
-          _spinIndex = winnerIndex >= 0 ? winnerIndex : 0;
-        });
-
-        // Pausa de 800ms com a roleta parada no vencedor antes da celebração
+        timer.cancel();
+        // Pausa dramática de 800ms com a roleta 3D cravada no vencedor
         await Future.delayed(const Duration(milliseconds: 800));
         if (!mounted) return;
         _revealWinner();
-        return;
       }
-
-      // Próxima opção da roleta
-      setState(() {
-        _spinIndex = (tickCount++) % candidates.length;
-      });
-
-      // Cálculo de desaceleração física (Efeito Fricção/Freio):
-      // Primeiros 6s: 80ms (Rápido)
-      // Últimos 4s: Desacelera exponencialmente de 80ms até ~750ms por passo
-      int nextDelayMs;
-      if (progress < 0.60) {
-        nextDelayMs = 80;
-      } else {
-        final double easeProgress = (progress - 0.60) / 0.40;
-        nextDelayMs = (80 + (easeProgress * easeProgress * 670)).round();
-      }
-
-      _spinTimer = Timer(Duration(milliseconds: nextDelayMs), runSpinStep);
-    }
-
-    runSpinStep();
+    });
   }
 
   void _revealWinner() {
@@ -193,7 +216,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                       Text(
-                        'O Grande Sorteio 🎲',
+                        'O Grande Sorteio',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -325,68 +348,131 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
         );
 
       case RaffleStage.spinning:
-        final candidateList = candidates.isNotEmpty ? candidates : (_winner != null ? [_winner!] : []);
-        final currentTitle = candidateList.isNotEmpty
-            ? candidateList[_spinIndex % candidateList.length].title
-            : '';
+        final reelList = _wheelItems.isNotEmpty ? _wheelItems : (candidates.isNotEmpty ? candidates : [_winner!]);
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Container Limpo de Roleta Vertical
+            // Selo de topo
+            const Text(
+              ' DESTINO EM AÇÃO ',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.accentGold,
+                letterSpacing: 1.2,
+              ),
+            ).animate().fadeIn(duration: 400.ms),
+
+            const SizedBox(height: 20),
+
+            // Gabinete 3D da Roleta Cilíndrica
             Container(
               width: double.infinity,
-              height: 110,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              alignment: Alignment.center,
+              height: 250,
               decoration: BoxDecoration(
                 color: AppTheme.backgroundCard,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppTheme.accentCyan, width: 2.5),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: AppTheme.primaryPink, width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.accentCyan.withOpacity(0.35),
-                    blurRadius: 20,
+                    color: AppTheme.primaryPink.withOpacity(0.35),
+                    blurRadius: 25,
                     spreadRadius: 1,
                   )
                 ],
               ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 70),
-                transitionBuilder: (child, animation) {
-                  return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, -0.8),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: FadeTransition(
-                      opacity: animation,
-                      child: child,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Moldura Neon Central de Alvo
+                  Container(
+                    height: 64,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.backgroundDeep.withOpacity(0.85),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppTheme.accentCyan, width: 2.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.accentCyan.withOpacity(0.4),
+                          blurRadius: 15,
+                        )
+                      ],
                     ),
-                  );
-                },
-                child: Text(
-                  currentTitle,
-                  key: ValueKey<int>(_spinIndex),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
-                ),
+
+                  // Indicadores Laterais da Roleta
+                  Positioned(
+                    left: 20,
+                    child: const Icon(Icons.arrow_right_rounded, color: AppTheme.accentCyan, size: 30)
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 500.ms),
+                  ),
+                  Positioned(
+                    right: 20,
+                    child: const Icon(Icons.arrow_left_rounded, color: AppTheme.accentCyan, size: 30)
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 500.ms),
+                  ),
+
+                  // Roleta 3D Contínua em Cilindro com Máscara de Desfoque
+                  ShaderMask(
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black,
+                          Colors.black,
+                          Colors.transparent,
+                        ],
+                        stops: [0.0, 0.25, 0.75, 1.0],
+                      ).createShader(rect);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: ListWheelScrollView.useDelegate(
+                      controller: _wheelController ?? FixedExtentScrollController(initialItem: 0),
+                      itemExtent: 58,
+                      diameterRatio: 1.8,
+                      perspective: 0.003,
+                      physics: const NeverScrollableScrollPhysics(),
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        childCount: reelList.length,
+                        builder: (context, index) {
+                          final item = reelList[index];
+                          return Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(horizontal: 45),
+                            child: Text(
+                              item.title,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: 24),
 
+            // Barra de Suspense Inferior
             const Text(
-              'Girando a roleta...',
+              'O destino está escolhendo...',
               style: TextStyle(
                 color: AppTheme.textSecondary,
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -408,7 +494,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              '✨ A ESCOLHA FOI... ✨',
+              ' A ESCOLHA FOI... ',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
