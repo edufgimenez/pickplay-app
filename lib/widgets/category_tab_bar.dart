@@ -39,11 +39,17 @@ class CategoryTabBar extends StatelessWidget {
 
           final cat = categories[index];
           final isSelected = appState.selectedCategory == cat.id;
+          final isCustom = !AppState.defaultCategories.containsKey(cat.id);
 
           return Padding(
             padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
               onTap: () => appState.setSelectedCategory(cat.id),
+              onLongPress: isCustom
+                  ? () {
+                      _showDeleteCategoryDialog(context, appState, cat.label);
+                    }
+                  : null,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -71,6 +77,7 @@ class CategoryTabBar extends StatelessWidget {
                   ),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       cat.icon,
@@ -79,7 +86,7 @@ class CategoryTabBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      cat.label,
+                      cat.label[0].toUpperCase() + cat.label.substring(1),
                       style: TextStyle(
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         color: isSelected ? Colors.white : AppTheme.textSecondary,
@@ -137,6 +144,35 @@ class CategoryTabBar extends StatelessWidget {
               }
             },
             child: const Text('Criar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteCategoryDialog(BuildContext context, AppState appState, String categoryName) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.backgroundCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Apagar "$categoryName"?', style: const TextStyle(color: Colors.white)),
+        content: const Text(
+          'Deseja apagar esta categoria personalizada?',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancelar', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () {
+              appState.removeCustomCategory(categoryName);
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Apagar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

@@ -143,21 +143,24 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: currentItems.isEmpty
                   ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.inventory_2_outlined, size: 60, color: AppTheme.textMuted.withOpacity(0.5)),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Nenhuma opção cadastrada!',
-                            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Adicione filmes, séries ou jogos acima para começar',
-                            style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
-                          ),
-                        ],
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.inventory_2_outlined, size: 60, color: AppTheme.textMuted.withOpacity(0.5)),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Nenhuma opção cadastrada!',
+                              style: TextStyle(fontSize: 16, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 6),
+                            const Text(
+                              'Adicione opções no campo acima para começar',
+                              style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   : ListView.builder(
