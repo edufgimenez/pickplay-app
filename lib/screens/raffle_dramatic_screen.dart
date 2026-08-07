@@ -189,22 +189,14 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                           children: [
                             SizedBox(
                               width: double.infinity,
-                              height: 56,
-                              child: ElevatedButton.icon(
+                              height: 52,
+                              child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.primaryPink,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                                  elevation: 10,
-                                  shadowColor: AppTheme.primaryPink.withOpacity(0.6),
-                                ),
-                                icon: const Icon(Icons.favorite_rounded, color: Colors.white),
-                                label: const Text(
-                                  'ACEITAR & SALVAR NO HISTÓRICO 💕',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
+                                  elevation: 6,
                                 ),
                                 onPressed: () {
                                   if (_winner != null) {
@@ -212,16 +204,27 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                                   }
                                   Navigator.of(context).pop();
                                 },
+                                child: const Text(
+                                  'Aceitar & Salvar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            TextButton.icon(
-                              icon: const Icon(Icons.refresh_rounded, color: AppTheme.accentCyan),
-                              label: const Text(
-                                'Sortear de Novo 🔄',
-                                style: TextStyle(color: AppTheme.accentCyan, fontWeight: FontWeight.bold),
-                              ),
+                            const SizedBox(height: 10),
+                            TextButton(
                               onPressed: _startRaffleProcess,
+                              child: const Text(
+                                'Sortear Novamente',
+                                style: TextStyle(
+                                  color: AppTheme.accentCyan,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                           ],
                         )
@@ -331,13 +334,23 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
         );
 
       case RaffleStage.revealed:
+        final categoryMeta = appState.allCategoriesList.firstWhere(
+          (c) => c.id.toLowerCase() == _winner?.category.toLowerCase(),
+          orElse: () => CategoryMeta(
+            id: _winner?.category ?? '',
+            label: _winner?.category ?? '',
+            icon: Icons.star_rounded,
+            color: AppTheme.primaryPurple,
+          ),
+        );
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              '🎉 O CASAL VAI FAZER... 🎉',
+              '✨ A ESCOLHA FOI... ✨',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.accentGold,
                 letterSpacing: 1.2,
@@ -369,12 +382,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
               child: Column(
                 children: [
                   Icon(
-                    appState.allCategoriesList
-                        .firstWhere(
-                          (c) => c.id == _winner?.category,
-                          orElse: () => appState.allCategoriesList.first,
-                        )
-                        .icon,
+                    categoryMeta.icon,
                     size: 50,
                     color: AppTheme.accentGold,
                   ),
@@ -396,9 +404,9 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Categoria: ${_winner?.category.toUpperCase()}',
+                      'Categoria: ${categoryMeta.label}',
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         color: AppTheme.accentCyan,
                         fontWeight: FontWeight.bold,
                       ),
