@@ -217,56 +217,73 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(width: 12),
 
-                  // Botão Principal SORTEAR AGORA!
+                  // Botão Principal SORTEAR AGORA! (Ativo apenas com 2+ opções)
                   Expanded(
-                    child: SizedBox(
-                      height: 54,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                          elevation: undrawnItems.isNotEmpty ? 8 : 0,
-                          shadowColor: AppTheme.primaryPink.withOpacity(0.5),
-                        ),
-                        onPressed: undrawnItems.isEmpty
-                            ? null
-                            : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const RaffleDramaticScreen(),
-                                  ),
-                                );
-                              },
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            gradient: undrawnItems.isNotEmpty
-                                ? AppTheme.primaryGradient
-                                : const LinearGradient(colors: [Colors.grey, Colors.black26]),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
-                                const SizedBox(width: 10),
-                                Text(
-                                  undrawnItems.isEmpty ? 'SEM OPÇÕES PARA SORTEAR' : '✨ SORTEAR AGORA! ✨',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
+                    child: Builder(
+                      builder: (context) {
+                        final canRaffle = undrawnItems.length >= 2;
+                        final String buttonLabel = undrawnItems.isEmpty
+                            ? 'ADICIONE OPÇÕES PARA SORTEAR'
+                            : (undrawnItems.length == 1
+                                ? 'ADICIONE +1 OPÇÃO PARA SORTEAR'
+                                : '✨ SORTEAR AGORA! ✨');
+
+                        return SizedBox(
+                          height: 54,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                              elevation: canRaffle ? 8 : 0,
+                              shadowColor: AppTheme.primaryPink.withOpacity(0.5),
                             ),
-                          ),
-                        ),
-                      ).animate(target: undrawnItems.isNotEmpty ? 1 : 0)
-                       .shimmer(duration: 2000.ms, delay: 3000.ms),
+                            onPressed: canRaffle
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const RaffleDramaticScreen(),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: canRaffle ? AppTheme.primaryGradient : null,
+                                color: canRaffle ? null : AppTheme.backgroundDeep,
+                                border: canRaffle
+                                    ? null
+                                    : Border.all(color: AppTheme.primaryPurple.withOpacity(0.4)),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome_rounded,
+                                      color: canRaffle ? Colors.white : AppTheme.textSecondary,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      buttonLabel,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: canRaffle ? Colors.white : AppTheme.textSecondary,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ).animate(target: canRaffle ? 1 : 0)
+                           .shimmer(duration: 2000.ms, delay: 3000.ms),
+                        );
+                      },
                     ),
                   ),
                 ],

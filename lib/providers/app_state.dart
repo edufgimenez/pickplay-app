@@ -201,10 +201,10 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // Realizar Sorteio do Vencedor
+  // Realizar Sorteio do Vencedor (exige no mínimo 2 opções)
   RaffleItem? pickRandomWinner() {
     final available = undrawnCurrentItems;
-    if (available.isEmpty) return null;
+    if (available.length < 2) return null;
 
     final random = Random();
     final winner = available[random.nextInt(available.length)];
