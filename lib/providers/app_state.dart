@@ -69,7 +69,9 @@ class AppState extends ChangeNotifier {
 
   IconData _getIconForCustomCategory(String name) {
     final lower = name.toLowerCase();
-    if (lower.contains('restaurante') || lower.contains('comida') || lower.contains('jantar') || lower.contains('almoço')) {
+    if (lower.contains('prato') || lower.contains('comida') || lower.contains('refeição') || lower.contains('menu') || lower.contains('lanche') || lower.contains('pizza') || lower.contains('sushi') || lower.contains('massa')) {
+      return Icons.dinner_dining_rounded;
+    } else if (lower.contains('restaurante') || lower.contains('jantar') || lower.contains('almoço')) {
       return Icons.restaurant_rounded;
     } else if (lower.contains('encontro') || lower.contains('date') || lower.contains('amor') || lower.contains('romance')) {
       return Icons.favorite_rounded;

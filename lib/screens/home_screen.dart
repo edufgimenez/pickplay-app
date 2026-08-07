@@ -36,16 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _getHintTextForCategory(String category) {
-    switch (category) {
-      case 'movies':
-        return 'Adicionar filme (ex: Interstellar)...';
-      case 'series':
-        return 'Adicionar série (ex: Stranger Things)...';
-      case 'games':
-        return 'Adicionar jogo (ex: Stardew Valley)...';
-      default:
-        return 'Adicionar opção nesta categoria...';
-    }
+    final lower = category.toLowerCase();
+    if (lower == 'movies') return 'Adicionar filme (ex: Interstellar)...';
+    if (lower == 'series') return 'Adicionar série (ex: Stranger Things)...';
+    if (lower == 'games') return 'Adicionar jogo (ex: Stardew Valley)...';
+    if (lower.contains('prato')) return 'Adicionar prato (ex: Parmegiana, Strogonoff)...';
+    if (lower.contains('restaurante')) return 'Adicionar restaurante (ex: Paris 6)...';
+    return 'Adicionar opção nesta categoria...';
   }
 
   @override
