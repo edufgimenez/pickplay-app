@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'providers/app_state.dart';
 import 'theme/app_theme.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,7 @@ class PickPlayApp extends StatelessWidget {
         title: 'PickPlay - Sorteador do Casal',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
-        home: const HomeScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
