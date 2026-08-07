@@ -51,10 +51,10 @@ class StorageService {
     await prefs.setString(_keyHistory, jsonEncode(jsonList));
   }
 
-  // Nome do casal (Ex: "Edu & Amor")
+  // Nome do casal (Padrão: "Nosso Casal")
   Future<String> loadCoupleNames() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyCoupleNames) ?? 'Edu & Amor';
+    return prefs.getString(_keyCoupleNames) ?? 'Nosso Casal';
   }
 
   Future<void> saveCoupleNames(String names) async {

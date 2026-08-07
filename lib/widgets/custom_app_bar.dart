@@ -9,14 +9,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(130);
+  Size get preferredSize => const Size.fromHeight(140);
 
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
 
     return Container(
-      padding: const EdgeInsets.only(top: 45, left: 16, right: 16, bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.backgroundCard.withOpacity(0.85),
         boxShadow: [
@@ -28,12 +27,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
       ),
-      child: Column(
-        children: [
-          // Linha 1: Marca & Configurações
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 6, bottom: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // Linha 1: Marca & Nome do Casal Clicável
               Row(
                 children: [
                   Container(
@@ -51,98 +52,109 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'PickPlay',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => const CoupleSettingsDialog(),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'PickPlay',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  appState.coupleNames,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.accentGold,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
+                            ],
+                          ),
+                        ],
                       ),
-                      Text(
-                        appState.coupleNames,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.accentGold,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-              IconButton(
-                icon: const Icon(Icons.tune_rounded, color: AppTheme.textSecondary),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => const CoupleSettingsDialog(),
-                  );
-                },
-              ),
+              const SizedBox(height: 8),
+              // Linha 2: Seletor de Mês Ativo
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.backgroundDeep.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: AppTheme.primaryPurple.withOpacity(0.4)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left_rounded, color: AppTheme.primaryPink),
+                      onPressed: appState.previousMonth,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => MonthPickerDialog(
+                            initialDate: appState.selectedMonth,
+                            onMonthSelected: (date) {
+                              appState.setSelectedMonth(date);
+                            },
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_month_rounded, color: AppTheme.accentCyan, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            appState.formattedMonthName,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.arrow_drop_down_rounded, color: AppTheme.textSecondary),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryPink),
+                      onPressed: appState.nextMonth,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
-          const SizedBox(height: 12),
-          // Linha 2: Seletor de Mês Ativo
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.backgroundDeep.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: AppTheme.primaryPurple.withOpacity(0.4)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left_rounded, color: AppTheme.primaryPink),
-                  onPressed: appState.previousMonth,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (ctx) => MonthPickerDialog(
-                        initialDate: appState.selectedMonth,
-                        onMonthSelected: (date) {
-                          appState.setSelectedMonth(date);
-                        },
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_month_rounded, color: AppTheme.accentCyan, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        appState.formattedMonthName,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.arrow_drop_down_rounded, color: AppTheme.textSecondary),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryPink),
-                  onPressed: appState.nextMonth,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
-          )
-        ],
+        ),
       ),
     );
   }

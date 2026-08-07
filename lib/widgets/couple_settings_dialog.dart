@@ -57,10 +57,12 @@ class _CoupleSettingsDialogState extends State<CoupleSettingsDialog> {
           const SizedBox(height: 16),
           TextField(
             controller: _controller,
+            maxLength: 25,
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
-              hintText: 'Ex: Edu & Amor',
+              hintText: 'Ex: Você & Eu, Maria & João...',
               hintStyle: const TextStyle(color: AppTheme.textMuted),
+              counterStyle: const TextStyle(color: AppTheme.textMuted, fontSize: 11),
               filled: true,
               fillColor: AppTheme.backgroundDeep,
               prefixIcon: const Icon(Icons.favorite_border_rounded, color: AppTheme.primaryPink),
@@ -83,7 +85,8 @@ class _CoupleSettingsDialogState extends State<CoupleSettingsDialog> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           onPressed: () {
-            appState.updateCoupleNames(_controller.text);
+            final trimmed = _controller.text.trim();
+            appState.updateCoupleNames(trimmed.isNotEmpty ? trimmed : 'Nosso Casal');
             Navigator.of(context).pop();
           },
           child: const Text('Salvar 💕', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

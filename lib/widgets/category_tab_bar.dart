@@ -21,29 +21,49 @@ class CategoryTabBar extends StatelessWidget {
           if (index == categories.length) {
             // Botão Adicionar Categoria
             return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ActionChip(
-                backgroundColor: AppTheme.backgroundCard,
-                side: BorderSide(color: AppTheme.primaryPink.withOpacity(0.5)),
-                avatar: const Icon(Icons.add_rounded, color: AppTheme.primaryPink, size: 18),
-                label: const Text(
-                  'Nova',
-                  style: TextStyle(color: AppTheme.primaryPink, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.only(right: 16),
+              child: GestureDetector(
+                onTap: () => _showAddCategoryDialog(context, appState),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundCard,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: AppTheme.primaryPink.withOpacity(0.6)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add_rounded, color: AppTheme.primaryPink, size: 18),
+                      SizedBox(width: 6),
+                      Text(
+                        'Nova',
+                        style: TextStyle(
+                          color: AppTheme.primaryPink,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: () {
-                  _showAddCategoryDialog(context, appState);
-                },
               ),
             );
           }
 
           final cat = categories[index];
           final isSelected = appState.selectedCategory == cat.id;
+          final isCustom = !AppState.defaultCategories.containsKey(cat.id);
 
           return Padding(
             padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
               onTap: () => appState.setSelectedCategory(cat.id),
+              onLongPress: isCustom
+                  ? () {
+                      _showDeleteCategoryDialog(context, appState, cat.label);
+                    }
+                  : null,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -71,6 +91,7 @@ class CategoryTabBar extends StatelessWidget {
                   ),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       cat.icon,
@@ -78,11 +99,15 @@ class CategoryTabBar extends StatelessWidget {
                       color: isSelected ? Colors.white : cat.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      cat.label,
-                      style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? Colors.white : AppTheme.textSecondary,
+                    Flexible(
+                      child: Text(
+                        cat.label[0].toUpperCase() + cat.label.substring(1),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected ? Colors.white : AppTheme.textSecondary,
+                        ),
                       ),
                     ),
                   ],
@@ -108,10 +133,12 @@ class CategoryTabBar extends StatelessWidget {
         title: const Text('Nova Categoria 🎨', style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: textController,
+          maxLength: 15,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: 'Ex: Restaurantes, Encontros...',
             hintStyle: const TextStyle(color: AppTheme.textMuted),
+            counterStyle: const TextStyle(color: AppTheme.textMuted, fontSize: 11),
             filled: true,
             fillColor: AppTheme.backgroundDeep,
             border: OutlineInputBorder(
@@ -137,6 +164,35 @@ class CategoryTabBar extends StatelessWidget {
               }
             },
             child: const Text('Criar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteCategoryDialog(BuildContext context, AppState appState, String categoryName) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.backgroundCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Apagar "$categoryName"?', style: const TextStyle(color: Colors.white)),
+        content: const Text(
+          'Deseja apagar esta categoria personalizada?',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancelar', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () {
+              appState.removeCustomCategory(categoryName);
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Apagar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

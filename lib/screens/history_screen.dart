@@ -111,21 +111,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Expanded(
               child: monthHistory.isEmpty
                   ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.history_toggle_off_rounded, size: 60, color: AppTheme.textMuted.withOpacity(0.4)),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Nenhum sorteio registrado neste mês!',
-                            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Faça um sorteio na tela principal para alimentar o histórico',
-                            style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
-                          ),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.history_toggle_off_rounded, size: 60, color: AppTheme.textMuted.withOpacity(0.4)),
+                            const SizedBox(height: 14),
+                            const Text(
+                              'Nenhum sorteio registrado neste mês!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Faça um sorteio na tela principal para alimentar o histórico',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -134,6 +139,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       itemBuilder: (context, index) {
                         final record = monthHistory[index];
                         final formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(record.drawnAt);
+
+                        final catMeta = appState.allCategoriesList.firstWhere(
+                          (c) => c.id.toLowerCase() == record.category.toLowerCase(),
+                          orElse: () => CategoryMeta(
+                            id: record.category,
+                            label: record.category,
+                            icon: Icons.star_rounded,
+                            color: AppTheme.primaryPurple,
+                          ),
+                        );
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -160,7 +175,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                             ),
                             subtitle: Text(
-                              'Sorteado em: $formattedDate • ${record.category.toUpperCase()}',
+                              'Sorteado em: $formattedDate • ${catMeta.label}',
                               style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                             ),
                           ),

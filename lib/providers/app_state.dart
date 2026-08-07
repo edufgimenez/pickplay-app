@@ -26,7 +26,7 @@ class AppState extends ChangeNotifier {
   String _selectedCategory = 'movies';
   List<RaffleItem> _allItems = [];
   List<RaffleHistoryRecord> _history = [];
-  String _coupleNames = 'Edu & Amor';
+  String _coupleNames = 'Nosso Casal';
   List<String> _customCategories = [];
   bool _isLoading = true;
 
@@ -67,6 +67,24 @@ class AppState extends ChangeNotifier {
     return name[0].toUpperCase() + name.substring(1);
   }
 
+  IconData _getIconForCustomCategory(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('prato') || lower.contains('comida') || lower.contains('refeição') || lower.contains('menu') || lower.contains('lanche') || lower.contains('pizza') || lower.contains('sushi') || lower.contains('massa')) {
+      return Icons.dinner_dining_rounded;
+    } else if (lower.contains('restaurante') || lower.contains('jantar') || lower.contains('almoço')) {
+      return Icons.restaurant_rounded;
+    } else if (lower.contains('encontro') || lower.contains('date') || lower.contains('amor') || lower.contains('romance')) {
+      return Icons.favorite_rounded;
+    } else if (lower.contains('viagem') || lower.contains('passeio') || lower.contains('turismo')) {
+      return Icons.explore_rounded;
+    } else if (lower.contains('bar') || lower.contains('drink') || lower.contains('cerveja')) {
+      return Icons.local_bar_rounded;
+    } else if (lower.contains('cinema') || lower.contains('teatro') || lower.contains('show')) {
+      return Icons.local_activity_rounded;
+    }
+    return Icons.stars_rounded;
+  }
+
   // Obter categorias ativas completas
   List<CategoryMeta> get allCategoriesList {
     List<CategoryMeta> list = [...defaultCategories.values];
@@ -74,7 +92,7 @@ class AppState extends ChangeNotifier {
       list.add(CategoryMeta(
         id: cat.toLowerCase(),
         label: cat,
-        icon: Icons.star_rounded,
+        icon: _getIconForCustomCategory(cat),
         color: const Color(0xFFFFC837),
       ));
     }
@@ -185,10 +203,10 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // Realizar Sorteio do Vencedor
+  // Realizar Sorteio do Vencedor (exige no mínimo 2 opções)
   RaffleItem? pickRandomWinner() {
     final available = undrawnCurrentItems;
-    if (available.isEmpty) return null;
+    if (available.length < 2) return null;
 
     final random = Random();
     final winner = available[random.nextInt(available.length)];
@@ -229,9 +247,19 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  // Remover categoria personalizada
+  Future<void> removeCustomCategory(String name) async {
+    _customCategories.remove(name);
+    await _storage.saveCustomCategories(_customCategories);
+    if (_selectedCategory == name.toLowerCase()) {
+      _selectedCategory = 'movies';
+    }
+    notifyListeners();
+  }
+
   // Atualizar nome do casal
   Future<void> updateCoupleNames(String names) async {
-    _coupleNames = names.trim().isEmpty ? 'Edu & Amor' : names.trim();
+    _coupleNames = names.trim().isEmpty ? 'Nosso Casal' : names.trim();
     await _storage.saveCoupleNames(_coupleNames);
     notifyListeners();
   }
