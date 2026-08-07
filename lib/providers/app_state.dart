@@ -26,7 +26,7 @@ class AppState extends ChangeNotifier {
   String _selectedCategory = 'movies';
   List<RaffleItem> _allItems = [];
   List<RaffleHistoryRecord> _history = [];
-  String _coupleNames = 'Edu & Amor';
+  String _coupleNames = 'Nosso Casal';
   List<String> _customCategories = [];
   bool _isLoading = true;
 
@@ -257,7 +257,7 @@ class AppState extends ChangeNotifier {
 
   // Atualizar nome do casal
   Future<void> updateCoupleNames(String names) async {
-    _coupleNames = names.trim().isEmpty ? 'Edu & Amor' : names.trim();
+    _coupleNames = names.trim().isEmpty ? 'Nosso Casal' : names.trim();
     await _storage.saveCoupleNames(_coupleNames);
     notifyListeners();
   }

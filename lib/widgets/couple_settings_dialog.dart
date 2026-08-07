@@ -59,7 +59,7 @@ class _CoupleSettingsDialogState extends State<CoupleSettingsDialog> {
             controller: _controller,
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
-              hintText: 'Ex: Edu & Amor',
+              hintText: 'Ex: Você & Eu, Maria & João...',
               hintStyle: const TextStyle(color: AppTheme.textMuted),
               filled: true,
               fillColor: AppTheme.backgroundDeep,
