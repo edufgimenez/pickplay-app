@@ -163,6 +163,29 @@ class _SplashScreenState extends State<SplashScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ).animate().fadeIn(duration: 800.ms, delay: 800.ms),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Feito com amor por EG para BR',
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.favorite_rounded,
+                        color: AppTheme.primaryPink,
+                        size: 14,
+                      )
+                          .animate(onPlay: (c) => c.repeat(reverse: true))
+                          .scale(begin: const Offset(1, 1), end: const Offset(1.25, 1.25), duration: 700.ms),
+                    ],
+                  ).animate().fadeIn(duration: 800.ms, delay: 1000.ms),
                 ],
               ),
             ),
