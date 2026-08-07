@@ -8,6 +8,8 @@ import '../models/raffle_item.dart';
 import '../theme/app_theme.dart';
 import '../widgets/confetti_overlay.dart';
 
+import '../services/sound_service.dart';
+
 enum RaffleStage { countdown, spinning, revealed }
 
 class RaffleDramaticScreen extends StatefulWidget {
@@ -68,12 +70,16 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
       _countdown = 5;
     });
 
+    // Tocar o primeiro som de tick
+    SoundService.playTick();
+
     // Contagem Regressiva de 5 Segundos
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdown > 1) {
         setState(() {
           _countdown--;
         });
+        SoundService.playTick();
       } else {
         timer.cancel();
         _startSpinningAnimation(appState);
@@ -96,6 +102,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
       setState(() {
         _spinIndex = (ticks) % candidates.length;
       });
+      SoundService.playTick();
 
       if (ticks >= maxTicks) {
         timer.cancel();
@@ -109,6 +116,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
       _stage = RaffleStage.revealed;
     });
     _confettiController.play();
+    SoundService.playWinner();
   }
 
   @override
