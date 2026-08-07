@@ -1,14 +1,14 @@
-# 💕 PickPlay - Sorteador de Entretenimento para Casais 🎬📺🎮
+# 💕 PickPlay - Sorteador de Entretenimento para Casais 🎬📺🎮🍽️
 
-> **PickPlay** é um aplicativo mobile em **Flutter** feito sob medida para casais resolverem o clássico dilema: *"O que vamos assistir ou jogar hoje?"* 
+> **PickPlay** é um aplicativo mobile em **Flutter** feito sob medida para casais resolverem o clássico dilema: *"O que vamos assistir, jogar ou comer hoje?"* 
 
-Com uma estética **Dark Romantic Neon**, o PickPlay transforma a escolha de filmes, séries, jogos e passeios em uma experiência divertida, cheia de suspense e comemoração a dois!
+Com uma estética **Dark Romantic Neon**, o PickPlay transforma a escolha de filmes, séries, jogos, pratos e passeios em uma experiência divertida, cheia de suspense, sons e comemoração a dois!
 
 ---
 
 ## 🌟 A Ideia & Conceito
 
-Chega de gastar 45 minutos rolando o catálogo da Netflix sem decidir nada! Com o **PickPlay**, o casal cadastra suas opções desejadas no mês atual e deixa que a sorte decida por vocês com um **sorteio dramático e empolgante**.
+Chega de gastar 45 minutos tentando decidir o que assistir ou onde comer! Com o **PickPlay**, o casal cadastra suas opções desejadas no mês atual e deixa que a sorte decida por vocês com um **sorteio dramático em roleta 3D com efeitos sonoros**.
 
 ---
 
@@ -16,27 +16,28 @@ Chega de gastar 45 minutos rolando o catálogo da Netflix sem decidir nada! Com 
 
 ### 📅 1. Organização por Mês Ativo
 - Navegue entre os meses do ano (**Agosto 2026**, **Setembro 2026**...).
-- O aplicativo armazena as opções e os sorteios de cada mês de forma isolada para criar uma memória afetiva das atividades do casal!
+- O aplicativo armazena as opções e os sorteios de cada mês de forma isolada para criar um histórico das atividades do casal.
 
 ### 🎬 2. Categorias Interativas com Ícones Inteligentes
 - **Filmes** 🎬
 - **Séries** 📺
 - **Jogos** 🎮
-- **Categorias Personalizadas** ➕: Crie suas próprias categorias (ex: *Restaurantes*, *Encontros*, *Passeios*, *Drinks*). O app reconhece automaticamente o tipo da palavra e atribui o ícone perfeito (ex: 🍽️ para Restaurante, 💖 para Encontro, ✈️ para Viagem).
+- **Pratos** 🍽️
+- **Categorias Personalizadas** ➕: Crie suas próprias categorias (ex: *Restaurantes*, *Pratos*, *Encontros*, *Passeios*, *Drinks*). O app reconhece automaticamente o tipo da palavra e atribui o ícone correspondente (ex: 🍽️ para Prato/Restaurante, 💖 para Encontro, ✈️ para Viagem).
 - **Gerenciamento Simples**: Toque longo para excluir categorias customizadas.
 
-### 🎭 3. O Grande Sorteio Dramático (5 Segundos de Suspense!)
-- **Contagem Regressiva Neon**: Contagem regressiva de `5` a `1` com pulso de luz e mensagens divertidas de suspense caindo a cada segundo (*"Consultando o oráculo do casal..."*, *"Misturando as escolhas secretas..."*).
-- **Efeito Roleta (Slot Machine)**: As opções do casal passam girando em velocidade alta até a desaceleração final.
-- **Explosão de Confetes & Corações**: Revelação do vencedor acompanhada de comemoração visual!
-- **Salvar ou Refazer**: Opção de salvar a vitória no Histórico do Mês com um clique.
+### 🎭 3. O Grande Sorteio Dramático
+- **Contagem Regressiva**: Contagem regressiva de 5 segundos com som de tick em tom crescente e mensagens divertidas de suspense.
+- **Roleta 3D Vertical (Slot Machine)**: Giro contínuo em 3D com desaceleração física gradual e trilha sonora de roleta com efeito fadeout.
+- **Explosão de Confetes & Áudio de Comemoração**: Revelação do vencedor acompanhada de confetes e música festiva.
+- **Salvar ou Refazer**: Opção de salvar a escolha no Histórico do Mês ou sortear novamente.
 
 ### 📜 4. Histórico do Casal
-- Registra a data e hora exatas de cada sorteio realizado no mês.
-- Estatísticas de quantos filmes, séries e jogos o casal já desfrutou juntos!
+- Registra a data, hora exata e categoria de cada sorteio realizado no mês.
+- Permite consultar o histórico mensal isoladamente.
 
 ### 💖 5. Personalização dos Nomes do Casal
-- Personalize como vocês desejam ser chamados no topo do aplicativo (ex: *Edu & Amor*, *BR & EG*).
+- Personalize como vocês desejam ser chamados no topo do aplicativo (ex: *"Ana & João"*, *"Amor da Minha Vida"* ou *"Meu Crush"*).
 
 ### 🔒 6. 100% Offline & Seguro
 - Todos os dados (opções, histórico e nomes) são salvos nativamente no próprio celular via `SharedPreferences`.
@@ -47,6 +48,7 @@ Chega de gastar 45 minutos rolando o catálogo da Netflix sem decidir nada! Com 
 
 - **[Flutter](https://flutter.dev/)** & **[Dart](https://dart.dev/)** (Framework Multiplataforma)
 - **[Provider](https://pub.dev/packages/provider)** (Gerenciamento de Estado Reativo)
+- **[AudioPlayers](https://pub.dev/packages/audioplayers)** (Sons da Contagem, Giro da Roleta e Comemoração)
 - **[Shared Preferences](https://pub.dev/packages/shared_preferences)** (Persistência Local JSON)
 - **[Flutter Animate](https://pub.dev/packages/flutter_animate)** (Animações Fluídas e Efeitos de Luz)
 - **[Confetti](https://pub.dev/packages/confetti)** (Explosão Visual de Partículas)
