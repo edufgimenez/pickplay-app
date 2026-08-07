@@ -55,32 +55,47 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
                       ),
                       const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'PickPlay',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => const CoupleSettingsDialog(),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'PickPlay',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-                          Text(
-                            appState.coupleNames,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.accentGold,
-                              fontWeight: FontWeight.w500,
+                            Row(
+                              children: [
+                                Text(
+                                  appState.coupleNames,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.accentGold,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
                   IconButton(
-                    icon: const Icon(Icons.tune_rounded, color: AppTheme.textSecondary),
+                    icon: const Icon(Icons.edit_rounded, color: AppTheme.primaryPink),
+                    tooltip: 'Editar nome do casal',
                     onPressed: () {
                       showDialog(
                         context: context,
