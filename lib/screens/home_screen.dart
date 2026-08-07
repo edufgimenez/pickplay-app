@@ -193,103 +193,108 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
             ),
 
-            // Barra Inferior com Ações & Botão de Sorteio
+            // Barra Inferior com Ações & Botão de Sorteio (Ajustada com SafeArea para botões do Android)
             Container(
-              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.backgroundCard.withOpacity(0.9),
+                color: AppTheme.backgroundCard.withOpacity(0.95),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                 border: Border(top: BorderSide(color: AppTheme.primaryPurple.withOpacity(0.3))),
               ),
-              child: Row(
-                children: [
-                  // Botão Ver Histórico
-                  IconButton.filledTonal(
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppTheme.backgroundDeep,
-                      padding: const EdgeInsets.all(14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    icon: const Icon(Icons.history_rounded, color: AppTheme.accentCyan),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HistoryScreen()),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 12),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      // Botão Ver Histórico
+                      IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppTheme.backgroundDeep,
+                          padding: const EdgeInsets.all(14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        icon: const Icon(Icons.history_rounded, color: AppTheme.accentCyan),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 12),
 
-                  // Botão Principal SORTEAR AGORA! (Ativo apenas com 2+ opções)
-                  Expanded(
-                    child: Builder(
-                      builder: (context) {
-                        final canRaffle = undrawnItems.length >= 2;
-                        final String buttonLabel = undrawnItems.isEmpty
-                            ? 'ADICIONE OPÇÕES PARA SORTEAR'
-                            : (undrawnItems.length == 1
-                                ? 'ADICIONE +1 OPÇÃO PARA SORTEAR'
-                                : '✨ SORTEAR AGORA! ✨');
+                      // Botão Principal SORTEAR AGORA! (Ativo apenas com 2+ opções)
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            final canRaffle = undrawnItems.length >= 2;
+                            final String buttonLabel = undrawnItems.isEmpty
+                                ? 'ADICIONE OPÇÕES PARA SORTEAR'
+                                : (undrawnItems.length == 1
+                                    ? 'ADICIONE +1 OPÇÃO PARA SORTEAR'
+                                    : '✨ SORTEAR AGORA! ✨');
 
-                        return SizedBox(
-                          height: 54,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                              elevation: canRaffle ? 8 : 0,
-                              shadowColor: AppTheme.primaryPink.withOpacity(0.5),
-                            ),
-                            onPressed: canRaffle
-                                ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const RaffleDramaticScreen(),
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: canRaffle ? AppTheme.primaryGradient : null,
-                                color: canRaffle ? null : AppTheme.backgroundDeep,
-                                border: canRaffle
-                                    ? null
-                                    : Border.all(color: AppTheme.primaryPurple.withOpacity(0.4)),
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.auto_awesome_rounded,
-                                      color: canRaffle ? Colors.white : AppTheme.textSecondary,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      buttonLabel,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                        color: canRaffle ? Colors.white : AppTheme.textSecondary,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ],
+                            return SizedBox(
+                              height: 54,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                                  elevation: canRaffle ? 8 : 0,
+                                  shadowColor: AppTheme.primaryPink.withOpacity(0.5),
                                 ),
-                              ),
-                            ),
-                          ).animate(target: canRaffle ? 1 : 0)
-                           .shimmer(duration: 2000.ms, delay: 3000.ms),
-                        );
-                      },
-                    ),
+                                onPressed: canRaffle
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => const RaffleDramaticScreen(),
+                                          ),
+                                        );
+                                      }
+                                    : null,
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: canRaffle ? AppTheme.primaryGradient : null,
+                                    color: canRaffle ? null : AppTheme.backgroundDeep,
+                                    border: canRaffle
+                                        ? null
+                                        : Border.all(color: AppTheme.primaryPurple.withOpacity(0.4)),
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.auto_awesome_rounded,
+                                          color: canRaffle ? Colors.white : AppTheme.textSecondary,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          buttonLabel,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: canRaffle ? Colors.white : AppTheme.textSecondary,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ).animate(target: canRaffle ? 1 : 0)
+                               .shimmer(duration: 2000.ms, delay: 3000.ms),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ],
