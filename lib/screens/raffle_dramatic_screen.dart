@@ -74,7 +74,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
     _spinTimer?.cancel();
     _wheelController?.dispose();
     _confettiController.dispose();
-    SoundService.stopPeao();
+    SoundService.stopAll();
     super.dispose();
   }
 
@@ -273,13 +273,16 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextButton(
-                              onPressed: _startRaffleProcess,
+                              onPressed: () {
+                                SoundService.stopAll();
+                                _startRaffleProcess();
+                              },
                               child: const Text(
                                 'Sortear Novamente',
                                 style: TextStyle(
                                   color: AppTheme.accentCyan,
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 15,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),

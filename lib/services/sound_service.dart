@@ -46,6 +46,22 @@ class SoundService {
     } catch (_) {}
   }
 
+  /// Para o som do vencedor
+  static Future<void> stopWinner() async {
+    try {
+      await _winPlayer.stop();
+    } catch (_) {}
+  }
+
+  /// Para todos os sons imediatamente ao sair da tela
+  static Future<void> stopAll() async {
+    try {
+      await _tickPlayer.stop();
+      await _peaoPlayer.stop();
+      await _winPlayer.stop();
+    } catch (_) {}
+  }
+
   static void dispose() {
     _tickPlayer.dispose();
     _peaoPlayer.dispose();
