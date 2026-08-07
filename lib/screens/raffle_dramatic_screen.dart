@@ -96,30 +96,64 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
     });
 
     final candidates = appState.undrawnCurrentItems;
-    int ticks = 0;
-    // Roleta rodando por exatamente 10 segundos (100 ticks x 100ms)
-    const maxTicks = 100;
+    if (candidates.isEmpty) {
+      _revealWinner();
+      return;
+    }
 
-    // Iniciar a música peao.mp3
+    // Iniciar áudio peao.mp3
     SoundService.playPeao();
 
-    _spinTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      ticks++;
+    int tickCount = 0;
+    const int totalDurationMs = 10000; // 10 segundos
+    final DateTime startTime = DateTime.now();
+
+    void runSpinStep() async {
+      if (!mounted) return;
+
+      final int elapsedMs = DateTime.now().difference(startTime).inMilliseconds;
+      final double progress = (elapsedMs / totalDurationMs).clamp(0.0, 1.0);
+
+      // FadeOut suave do áudio nos últimos 3.5 segundos
+      if (progress > 0.65) {
+        final double volume = (1.0 - progress) / 0.35;
+        SoundService.setPeaoVolume(volume);
+      }
+
+      // Quando atingir os 10 segundos, travar no vencedor
+      if (elapsedMs >= totalDurationMs) {
+        final int winnerIndex = candidates.indexWhere((item) => item.id == _winner?.id);
+        setState(() {
+          _spinIndex = winnerIndex >= 0 ? winnerIndex : 0;
+        });
+
+        // Pausa de 800ms com a roleta parada no vencedor antes da celebração
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (!mounted) return;
+        _revealWinner();
+        return;
+      }
+
+      // Próxima opção da roleta
       setState(() {
-        _spinIndex = ticks % candidates.length;
+        _spinIndex = (tickCount++) % candidates.length;
       });
 
-      // Efeito FadeOut nos últimos 3 segundos (do tick 70 ao 100)
-      if (ticks > 70) {
-        final double fadeVolume = (100 - ticks) / 30.0;
-        SoundService.setPeaoVolume(fadeVolume);
+      // Cálculo de desaceleração física (Efeito Fricção/Freio):
+      // Primeiros 6s: 80ms (Rápido)
+      // Últimos 4s: Desacelera exponencialmente de 80ms até ~750ms por passo
+      int nextDelayMs;
+      if (progress < 0.60) {
+        nextDelayMs = 80;
+      } else {
+        final double easeProgress = (progress - 0.60) / 0.40;
+        nextDelayMs = (80 + (easeProgress * easeProgress * 670)).round();
       }
 
-      if (ticks >= maxTicks) {
-        timer.cancel();
-        _revealWinner();
-      }
-    });
+      _spinTimer = Timer(Duration(milliseconds: nextDelayMs), runSpinStep);
+    }
+
+    runSpinStep();
   }
 
   void _revealWinner() {
@@ -291,44 +325,70 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
         );
 
       case RaffleStage.spinning:
-        final currentSpinnedTitle = candidates.isNotEmpty
-            ? candidates[_spinIndex % candidates.length].title
-            : _winner?.title ?? '';
+        final candidateList = candidates.isNotEmpty ? candidates : (_winner != null ? [_winner!] : []);
+        final currentTitle = candidateList.isNotEmpty
+            ? candidateList[_spinIndex % candidateList.length].title
+            : '';
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.auto_awesome_rounded, color: AppTheme.accentGold, size: 50)
-                .animate()
-                .rotate(duration: 1000.ms),
-            const SizedBox(height: 20),
+            // Container Limpo de Roleta Vertical
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              width: double.infinity,
+              height: 110,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppTheme.backgroundCard,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.accentCyan, width: 2),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppTheme.accentCyan, width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.accentCyan.withOpacity(0.4),
+                    color: AppTheme.accentCyan.withOpacity(0.35),
                     blurRadius: 20,
+                    spreadRadius: 1,
                   )
                 ],
               ),
-              child: Text(
-                currentSpinnedTitle,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 70),
+                transitionBuilder: (child, animation) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, -0.8),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Text(
+                  currentTitle,
+                  key: ValueKey<int>(_spinIndex),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 24),
+
             const Text(
               'Girando a roleta...',
-              style: TextStyle(color: AppTheme.textMuted, fontSize: 16),
+              style: TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         );
