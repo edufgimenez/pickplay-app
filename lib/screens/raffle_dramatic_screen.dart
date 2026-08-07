@@ -247,7 +247,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                 ),
               ),
             )
-            .animate(key: ValueKey(_countdown))
+            .animate(key: ValueKey('circle_$_countdown'))
             .scale(duration: 400.ms, curve: Curves.elasticOut),
 
             const SizedBox(height: 40),
@@ -262,7 +262,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
                 color: AppTheme.textSecondary,
               ),
             )
-            .animate(key: ValueKey(_countdown))
+            .animate(key: ValueKey('text_$_countdown'))
             .fadeIn(duration: 300.ms)
             .slideY(begin: 0.2, end: 0),
           ],
