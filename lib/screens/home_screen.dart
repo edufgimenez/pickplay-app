@@ -89,11 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: TextField(
                         controller: _itemController,
                         focusNode: _focusNode,
+                        maxLength: 45,
                         style: const TextStyle(color: Colors.white),
                         onSubmitted: (_) => _addItem(appState),
                         decoration: InputDecoration(
                           hintText: _getHintTextForCategory(appState.selectedCategory),
                           hintStyle: const TextStyle(color: AppTheme.textMuted, fontSize: 14),
+                          counterText: '',
                           border: InputBorder.none,
                         ),
                       ),

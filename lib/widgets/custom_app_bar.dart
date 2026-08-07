@@ -52,40 +52,46 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => const CoupleSettingsDialog(),
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'PickPlay',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              appState.coupleNames,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppTheme.accentGold,
-                                fontWeight: FontWeight.w500,
-                              ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => const CoupleSettingsDialog(),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'PickPlay',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
                             ),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  appState.coupleNames,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.accentGold,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

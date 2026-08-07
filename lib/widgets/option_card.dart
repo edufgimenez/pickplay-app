@@ -68,6 +68,8 @@ class OptionCard extends StatelessWidget {
             ),
             title: Text(
               item.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

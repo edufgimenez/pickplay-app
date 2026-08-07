@@ -99,11 +99,15 @@ class CategoryTabBar extends StatelessWidget {
                       color: isSelected ? Colors.white : cat.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      cat.label[0].toUpperCase() + cat.label.substring(1),
-                      style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? Colors.white : AppTheme.textSecondary,
+                    Flexible(
+                      child: Text(
+                        cat.label[0].toUpperCase() + cat.label.substring(1),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected ? Colors.white : AppTheme.textSecondary,
+                        ),
                       ),
                     ),
                   ],
@@ -129,10 +133,12 @@ class CategoryTabBar extends StatelessWidget {
         title: const Text('Nova Categoria 🎨', style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: textController,
+          maxLength: 15,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: 'Ex: Restaurantes, Encontros...',
             hintStyle: const TextStyle(color: AppTheme.textMuted),
+            counterStyle: const TextStyle(color: AppTheme.textMuted, fontSize: 11),
             filled: true,
             fillColor: AppTheme.backgroundDeep,
             border: OutlineInputBorder(
