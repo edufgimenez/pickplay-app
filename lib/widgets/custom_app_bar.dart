@@ -37,10 +37,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               // Linha 1: Marca & Nome do Casal Clicável
               Row(
                 children: [
-                  Image.asset(
-                    'assets/images/logo-icon.png',
-                    height: 42,
-                    fit: BoxFit.contain,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.primaryGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryPink.withOpacity(0.5),
+                          blurRadius: 10,
+                        )
+                      ],
+                    ),
+                    child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 10),
                   GestureDetector(
