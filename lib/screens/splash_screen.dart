@@ -42,57 +42,33 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.15),
+            radius: 0.9,
+            colors: [
+              AppTheme.primaryPurple.withOpacity(0.25),
+              AppTheme.backgroundDeep,
+            ],
+          ),
         ),
         child: Stack(
           children: [
-            // Efeitos de luz de fundo em desfoque neon
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.25,
-              left: MediaQuery.of(context).size.width * 0.2,
-              child: Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.primaryPink.withOpacity(0.25),
-                ),
-              ).animate().scale(duration: 1500.ms, curve: Curves.easeInOut).blurXY(begin: 20, end: 60),
-            ),
-            Positioned(
-              bottom: MediaQuery.of(context).size.height * 0.25,
-              right: MediaQuery.of(context).size.width * 0.2,
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.primaryPurple.withOpacity(0.3),
-                ),
-              ).animate().scale(duration: 1800.ms, curve: Curves.easeInOut).blurXY(begin: 20, end: 60),
-            ),
-
             // Conteúdo Centralizado
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo com efeito de entrada pulsante e brilho
+                  // Logo com entrada pulsante e brilho sutil
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primaryPink.withOpacity(0.4),
-                          blurRadius: 40,
-                          spreadRadius: 5,
+                          color: AppTheme.primaryPink.withOpacity(0.15),
+                          blurRadius: 25,
+                          spreadRadius: 0,
                         ),
-                        BoxShadow(
-                          color: AppTheme.accentCyan.withOpacity(0.2),
-                          blurRadius: 60,
-                          spreadRadius: 10,
-                        )
                       ],
                     ),
                     child: Image.asset(
