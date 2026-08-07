@@ -53,6 +53,7 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
     _countdownTimer?.cancel();
     _spinTimer?.cancel();
     _confettiController.dispose();
+    SoundService.stopPeao();
     super.dispose();
   }
 
@@ -70,16 +71,18 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
       _countdown = 5;
     });
 
-    // Tocar o primeiro som de tick
-    SoundService.playTick();
+    // Tocar o primeiro som de tick (5s)
+    SoundService.playTick(pitch: 0.9);
 
-    // Contagem Regressiva de 5 Segundos
+    // Contagem Regressiva de 5 Segundos com Tom Crescente
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdown > 1) {
         setState(() {
           _countdown--;
         });
-        SoundService.playTick();
+        // Aumenta o tom (pitch) a cada segundo para criar suspense!
+        final double pitchStep = 1.6 - (_countdown * 0.14);
+        SoundService.playTick(pitch: pitchStep);
       } else {
         timer.cancel();
         _startSpinningAnimation(appState);
@@ -94,15 +97,23 @@ class _RaffleDramaticScreenState extends State<RaffleDramaticScreen> {
 
     final candidates = appState.undrawnCurrentItems;
     int ticks = 0;
-    const maxTicks = 20;
+    // Roleta rodando por exatamente 10 segundos (100 ticks x 100ms)
+    const maxTicks = 100;
 
-    // Efeito Slot Machine rodando rápido
+    // Iniciar a música peao.mp3
+    SoundService.playPeao();
+
     _spinTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       ticks++;
       setState(() {
-        _spinIndex = (ticks) % candidates.length;
+        _spinIndex = ticks % candidates.length;
       });
-      SoundService.playTick();
+
+      // Efeito FadeOut nos últimos 3 segundos (do tick 70 ao 100)
+      if (ticks > 70) {
+        final double fadeVolume = (100 - ticks) / 30.0;
+        SoundService.setPeaoVolume(fadeVolume);
+      }
 
       if (ticks >= maxTicks) {
         timer.cancel();
