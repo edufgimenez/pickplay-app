@@ -161,7 +161,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.inventory_2_outlined, size: 60, color: AppTheme.textMuted.withOpacity(0.5)),
+                            Image.asset(
+                              'assets/images/logo-icon.png',
+                              height: 110,
+                              fit: BoxFit.contain,
+                            ),
                             const SizedBox(height: 12),
                             const Text(
                               'Nenhuma opção cadastrada!',
