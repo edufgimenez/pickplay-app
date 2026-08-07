@@ -35,6 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _getHintTextForCategory(String category) {
+    switch (category) {
+      case 'movies':
+        return 'Adicionar filme (ex: Interstellar)...';
+      case 'series':
+        return 'Adicionar série (ex: Stranger Things)...';
+      case 'games':
+        return 'Adicionar jogo (ex: Stardew Valley)...';
+      default:
+        return 'Adicionar opção nesta categoria...';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
@@ -82,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: const TextStyle(color: Colors.white),
                         onSubmitted: (_) => _addItem(appState),
                         decoration: InputDecoration(
-                          hintText: 'Adicionar nova opção (ex: Interstellar)...',
+                          hintText: _getHintTextForCategory(appState.selectedCategory),
                           hintStyle: const TextStyle(color: AppTheme.textMuted, fontSize: 14),
                           border: InputBorder.none,
                         ),

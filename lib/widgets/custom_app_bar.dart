@@ -34,74 +34,59 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Linha 1: Marca & Configurações
+              // Linha 1: Marca & Nome do Casal Clicável
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: AppTheme.primaryGradient,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryPink.withOpacity(0.5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
-                      ),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => const CoupleSettingsDialog(),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'PickPlay',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  appState.coupleNames,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppTheme.accentGold,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.primaryGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryPink.withOpacity(0.5),
+                          blurRadius: 10,
+                        )
+                      ],
+                    ),
+                    child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_rounded, color: AppTheme.primaryPink),
-                    tooltip: 'Editar nome do casal',
-                    onPressed: () {
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
                       showDialog(
                         context: context,
                         builder: (ctx) => const CoupleSettingsDialog(),
                       );
                     },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'PickPlay',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              appState.coupleNames,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.accentGold,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.edit_rounded, color: AppTheme.accentGold, size: 12),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

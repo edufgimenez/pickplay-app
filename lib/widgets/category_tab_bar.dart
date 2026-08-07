@@ -21,18 +21,32 @@ class CategoryTabBar extends StatelessWidget {
           if (index == categories.length) {
             // Botão Adicionar Categoria
             return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ActionChip(
-                backgroundColor: AppTheme.backgroundCard,
-                side: BorderSide(color: AppTheme.primaryPink.withOpacity(0.5)),
-                avatar: const Icon(Icons.add_rounded, color: AppTheme.primaryPink, size: 18),
-                label: const Text(
-                  'Nova',
-                  style: TextStyle(color: AppTheme.primaryPink, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.only(right: 16),
+              child: GestureDetector(
+                onTap: () => _showAddCategoryDialog(context, appState),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundCard,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: AppTheme.primaryPink.withOpacity(0.6)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add_rounded, color: AppTheme.primaryPink, size: 18),
+                      SizedBox(width: 6),
+                      Text(
+                        'Nova',
+                        style: TextStyle(
+                          color: AppTheme.primaryPink,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: () {
-                  _showAddCategoryDialog(context, appState);
-                },
               ),
             );
           }
