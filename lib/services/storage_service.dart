@@ -8,6 +8,19 @@ class StorageService {
   static const String _keyHistory = 'pickplay_raffle_history';
   static const String _keyCoupleNames = 'pickplay_couple_names';
   static const String _keyCustomCategories = 'pickplay_custom_categories';
+  static const String _keyFirstLaunch = 'pickplay_is_first_launch';
+
+  // Verificar primeira execução
+  Future<bool> isFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyFirstLaunch) ?? true;
+  }
+
+  // Marcar primeira execução como concluída
+  Future<void> markFirstLaunchCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyFirstLaunch, false);
+  }
 
   // Carregar todos os itens salvos
   Future<List<RaffleItem>> loadItems() async {
