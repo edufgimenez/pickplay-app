@@ -125,9 +125,12 @@ class AppState extends ChangeNotifier {
     _coupleNames = await _storage.loadCoupleNames();
     _customCategories = await _storage.loadCustomCategories();
 
-    // Se estiver totalmente vazio pela primeira vez, adicionar alguns exemplos fofos!
-    if (_allItems.isEmpty) {
+    final isFirst = await _storage.isFirstLaunch();
+
+    // Adicionar exemplos APENAS na primeira abertura absoluta após instalar
+    if (isFirst) {
       _addInitialSampleData();
+      await _storage.markFirstLaunchCompleted();
     }
 
     _isLoading = false;
