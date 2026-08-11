@@ -264,25 +264,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.auto_awesome_rounded,
-                                          color: canRaffle ? Colors.white : AppTheme.textSecondary,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          buttonLabel,
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.auto_awesome_rounded,
                                             color: canRaffle ? Colors.white : AppTheme.textSecondary,
-                                            letterSpacing: 0.5,
+                                            size: 18,
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            buttonLabel,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: canRaffle ? Colors.white : AppTheme.textSecondary,
+                                              letterSpacing: 0.4,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
